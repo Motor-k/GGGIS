@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <div class='container'>
+    <h3>Floors</h3>
+    <form>
+      <input type='button' class='floor' value='0'/>
+      <input type='button' class='floor' value='1'/>
+      <input type='button' class='floor' value='2'/>
+      <input type='button' class='floor' value='3'/>
+      <input type='button' class='floor' value='4'/>
+    </form>
+    <div>
+      <input type="range" id="elevator" name="elevator"
+             min="0" max="4" step="1" value="0" disabled>
+      <label for="elevator" id="status">elevator</label>
+    </div>
+</div>
+</body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+        update_status=true
+        ip = "{{ local_ip }}"
+        position = 0
+        status = "elevator"
+        function checkstatus() { 
+          $.get("http://"+ip+":5000/background_process_test",function(getresult){
+            rm_array = getresult.split('\n');
+            console.log(rm_array);
+            //update elevator position on the input with values from get
+            $("#elevator").val(rm_array[0]);
+            //update elevator status label with values from get
+            $("#status").text(rm_array[1]);
+          });
+        }
+        //jquery function
+        $(function() {
+          $('.floor').on('click', function(e) {
+            // dont submit the form
+            e.preventDefault()
+            //set get the value of the button we pressed since this code handles different buttons based on the class
+            floor = $(this).attr("value")
+            $.post("http://"+ip+":5000/background_process_test",{floor:floor},function(postresult){
+              $(this).attr("disabled");
+              // update status label with response from flask
+              $("#status").text(postresult);
+            });
+          });
+        });
+        // 1 second timer that calls function to update elevator position
+        // can be resource intensive
+        (function runForever(){
+          if (update_status = true){
+            checkstatus();
+          }
+        setTimeout(runForever, 1000)
+        })()
+</script>
+</html>

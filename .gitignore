@@ -1,0 +1,6 @@
+./static
+./venv
+./deprecated_files
+./archives
+./templates/test.html
+./templates/json.html

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+
+</style>
+<form>
+<table class="w3-table ">
+<tbody>
+<tr>
+<td class="w3-border w3-border-black" style="padding: 6px;">Lisboa</td>
+<td class="w3-border w3-border-black" style="padding: 6px;">
+<input type="radio" name="lisboa" value="1"> <a class="st"> ⭐ </a>
+<input type="radio" name="lisboa" value="2"> <a class="st"> ⭐⭐</a>
+<input type="radio" name="lisboa" value="3"> <a class="st"> ⭐⭐⭐</a>
+<input type="radio" name="lisboa" value="4"> <a class="st"> ⭐⭐⭐⭐</a>
+<input type="radio" name="lisboa" value="5"> <a class="st"> ⭐⭐⭐⭐⭐</a>
+</td>
+<td class="w3-border w3-border-black" style="padding: 6px;" >benfica</td>
+<td class="w3-border w3-border-black" style="padding: 6px;"><div id="benfica" class="wrapper">
+  <input type="radio" name="lisboa" value="1"> <a class="st"> ⭐ </a>
+  <input type="radio" name="lisboa" value="2"> <a class="st"> ⭐⭐</a>
+  <input type="radio" name="lisboa" value="3"> <a class="st"> ⭐⭐⭐</a>
+  <input type="radio" name="lisboa" value="4"> <a class="st"> ⭐⭐⭐⭐</a>
+  <input type="radio" name="lisboa" value="5"> <a class="st"> ⭐⭐⭐⭐⭐</a>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<br><br>
+<a class="submit w3-button w3-black w3-hover-amber"> Submit </a>
+</form>
+
+<script>
+$(document).on("click",".st",function(){
+
+$(this).prev("input[type=radio]").prop("checked",true)
+
+});
+
+// code to get selected filter
+$(document).on("click",".submit",function(){
+  filterrating = []
+  // get all checked checkboxes that have the class st
+  $("input[type=radio]:checked").each(function(){
+    filterrating[$(this).attr("name")] = $(this).val();
+  });
+});
+
+</script>

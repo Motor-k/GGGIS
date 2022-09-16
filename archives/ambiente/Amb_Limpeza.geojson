@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "Amb_Limpeza",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 1, "SERVICO": "Calhariz", "TOPMOD4": "R Antonio Saude", "LOCAL": "-", "ZONA": "Z2", "IDTIPO": "9121", "COD_SIG": "P2", "GlobalID": "14b3739a-4903-470a-b12a-a1f2932db298" }, "geometry": { "type": "Point", "coordinates": [ -9.188981917817109, 38.745992374384301 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 2, "SERVICO": "Restelo", "TOPMOD4": "R Antao Goncalves", "LOCAL": "-", "ZONA": "Z1", "IDTIPO": "9121", "COD_SIG": "P1", "GlobalID": "e5acd94a-a5b8-4120-8e18-f5397ad6166d" }, "geometry": { "type": "Point", "coordinates": [ -9.211452865915909, 38.709552429601402 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 3, "SERVICO": "Marvila", "TOPMOD4": "R Marvila", "LOCAL": "59", "ZONA": "Z4", "IDTIPO": "9121", "COD_SIG": "P4", "GlobalID": "0bc64862-54fd-4365-a61c-31f23d439013" }, "geometry": { "type": "Point", "coordinates": [ -9.106179400177879, 38.740216767326999 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 4, "SERVICO": "Olivais", "TOPMOD4": "Av Cidade de Luanda", "LOCAL": "-", "ZONA": "Z4", "IDTIPO": "9121", "COD_SIG": "PP4", "GlobalID": "d1eeae94-5560-4da7-be92-b450a5b076b1" }, "geometry": { "type": "Point", "coordinates": [ -9.11072508661961, 38.762803897659502 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 5, "SERVICO": "Boavista", "TOPMOD4": "R Dom Luis I", "LOCAL": "10", "ZONA": "Z1", "IDTIPO": "9121", "COD_SIG": "PP1", "GlobalID": "21344f20-af92-4376-ad0a-9c8b616382f9" }, "geometry": { "type": "Point", "coordinates": [ -9.14777864903358, 38.707780261448796 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 6, "SERVICO": "Telheiras", "TOPMOD4": "R Carvalhao Duarte", "LOCAL": "Telheiras", "ZONA": "Z2", "IDTIPO": "9121", "COD_SIG": "PP2", "GlobalID": "c0b80ed1-eabd-4924-bebb-aed6ea0c00ec" }, "geometry": { "type": "Point", "coordinates": [ -9.165732542693711, 38.757766288301298 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 7, "SERVICO": "Rego", "TOPMOD4": "R Filipe da Mata", "LOCAL": "-", "ZONA": "Z3", "IDTIPO": "9121", "COD_SIG": "PP3", "GlobalID": "cfb79078-7c00-450b-abb7-65726b9959e2" }, "geometry": { "type": "Point", "coordinates": [ -9.15907745386138, 38.741751232484802 ] } },
+{ "type": "Feature", "properties": { "OBJECTID": 8, "SERVICO": "Valsassina", "TOPMOD4": "Av Avelino Teixeira da Mota", "LOCAL": "Crzt. Az Terezinhas", "ZONA": "Z3", "IDTIPO": "9121", "COD_SIG": "P3", "GlobalID": "c6418e72-b83d-4224-8bf5-5e1e84ad2205" }, "geometry": { "type": "Point", "coordinates": [ -9.12518978986723, 38.755529914703203 ] } }
+]
+}

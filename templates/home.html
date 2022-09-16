@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+/*Changed*/
+[data-tooltip]:hover {
+	z-index:3;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -80px;
+  padding: 7px;
+  width: 160px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #000;
+  background-color: hsla(0, 0%, 20%, 0.9);
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  border-top: 5px solid #000;
+  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+}
+
+/*stas code*/
+
+.rating {
+  display: inline-block;
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  font-size: 50px;
+}
+
+.rating label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  cursor: pointer;
+}
+
+.rating label:last-child {
+  position: static;
+}
+
+.rating label:nth-child(1) {
+  z-index: 5;
+}
+
+.rating label:nth-child(2) {
+  z-index: 4;
+}
+
+.rating label:nth-child(3) {
+  z-index: 3;
+}
+
+.rating label:nth-child(4) {
+  z-index: 2;
+}
+
+.rating label:nth-child(5) {
+  z-index: 1;
+}
+
+.rating label input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.rating label .icon {
+  float: left;
+  color: transparent;
+}
+
+.rating label:last-child .icon {
+  color: #000;
+}
+
+.rating:not(:hover) label input:checked ~ .icon,
+.rating:hover label:hover input ~ .icon {
+  color: #09f;
+}
+
+.rating label input:focus:not(:checked) ~ .icon:last-child {
+  color: #000;
+  text-shadow: 0 0 5px #09f;
+}
+
+/*end of star rating*/
+
+/*pointer class*/
+.clickable:hover,.clk:hover,.cursor-click:hover { color: black;text-decoration: none;cursor: pointer;}
+.clickablew:hover,.clkw:hover,.cursor-clickw:hover { color: white;text-decoration: none;cursor: pointer;}
+</style>
+</head>
+<body class="w3-light-grey">
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+  <span class="w3-bar-item w3-right"></span>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+  <div class="w3-container">
+    <h5>Dashboard</h5>
+  </div>
+  <div class="w3-bar-block">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i> Analytics </a>
+    <a href="#" class="clickable w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-eye fa-fw"></i> Filters </a>
+    <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cog fa-fw"></i> Settings </a><br><br>
+  </div>
+</nav>
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+  <div class="w3-panel">
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-twothird">
+        <h5>Regions 
+          <a class="toggle_filter" data-tooltip="Change mode"><i class="fa fa-refresh"></i></a>&emsp;
+          <a class="reset" data-tooltip="Reset the map"><i class="fa fa-home"></i></a>
+        </h5>
+        <div class="map2 w3-container" style="width:100%;overflow-x: scroll;overflow-y: scroll;height: 700px;">
+          <img class="map" src="{{url_for('static', filename='graph.png')}}" class="w3-border w3-padding"></img>
+        </div>
+      </div>
+      <div class="w3-third">
+        <h5 class="type_text">Filters</h5>
+        <div style="width:100%;overflow-x: scroll;overflow-y: scroll;height:700px;">
+          <table id="filters" class="w3-table w3-striped w3-white">
+          </table>
+          <table id="zones" class="w3-table w3-striped w3-white">
+          </table>
+        </div>
+      <br>
+      <a class="submit w3-button w3-black w3-border w3-hover-amber clk">Load map</a>
+      <select id="scale" name="scale" style="float: right;margin-right: 16px;">
+        <option value="1">1x</option>
+        <option value="2">2x</option>
+        <option value="3">3x</option>
+        <option value="4">4x</option>
+        <option value="5">5x</option>
+        <option value="6">6x</option>
+      </select>&emsp;
+      
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h5>Analytics</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <tr>
+        <td>United States</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:50%;line-height:1px">50%</div></td>
+      </tr>
+      <tr>
+        <td>UK</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:30%;line-height:1px">30%</div></td>
+      </tr>
+      <tr>
+        <td>Latvia</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:10%;line-height:1px">10%</div></td>
+      </tr>
+      <tr>
+        <td>Spain</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:2.5%;line-height:1px">2.5%</div></td>
+      </tr>
+      <tr>
+        <td>India</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:2%;line-height:1px">2%</div></td>
+      </tr>
+      <tr>
+        <td>France</td>
+        <td><div class="w3-container w3-center w3-padding w3-green" style="height:20px;width:0.5%;line-height:1px">0.5%</div></td>
+      </tr>
+    </table><br>
+    <button class="w3-button w3-dark-grey">More Countries  <i class="fa fa-arrow-right"></i></button>
+  </div>
+  <br>
+  </div>
+  <!-- End page content -->
+</div>
+
+<!-- star rating to append -->
+<div id="relevance" >
+
+</div>
+
+<!--Multi purpose modal-->
+<div id="id01" class="w3-modal" style="padding-top:10%!important;opacity:1!important;">
+  <div class="w3-modal-content w3-card-8" >
+    <header class="w3-container w3-black">
+      <span style="float: right;font-size: 24px;" onclick="document.getElementById('id01').style.display='none'" class="w3-closebtn clk">&times;</span>
+      <h2 class="modal_head"></h2>
+    </header>
+    <div class="w3-container modal_subtitle" style="border-bottom:1px solid;">
+      
+    </div>
+      
+    <div class="w3-container w3-white modal_body">
+
+    </div>
+  </div>
+</div>
+<button id='modbtn' style="display:none" onClick="document.getElementById('id01').style.display='block'"></button>
+
+<script>
+  // Get the Sidebar
+  var mySidebar = document.getElementById("mySidebar");
+  
+  // Get the DIV with overlay effect
+  var overlayBg = document.getElementById("myOverlay");
+  
+  // Toggle between showing and hiding the sidebar, and add overlay effect
+  function w3_open() {
+    if (mySidebar.style.display === 'block') {
+      mySidebar.style.display = 'none';
+      overlayBg.style.display = "none";
+    } else {
+      mySidebar.style.display = 'block';
+      overlayBg.style.display = "block";
+    }
+  }
+  
+  // Close the sidebar with the close button
+  function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+  }
+
+  // function responsible for aquiring filters and loading maps
+  function ajaxreq(filter) {
+    // post that comunicates the selected filter/s to flask and also recieves the list of available filters in realtime
+    $.post("http://"+ip+":5000/background_process_test",{filter:filter},function(postresult){
+      $("#filters").empty();
+      $("#relevance").empty();
+      $("#relevance").append("<table><tbody id='rel_table'>");
+      Object.entries(postresult.data).forEach(entry => {
+        const [key, val] = entry;
+        $("#filters").append('<tr><td><input type="checkbox" class="parent clk w3-hover-text-amber" value="'+key+'"></input></td>\
+          <td style="line-height:15px">'+key+'</td></tr>');
+        Object.values(val).forEach(eta => {
+          str = eta.toString();
+          searchStr = key;
+          lg = searchStr.length;
+          pos = str.lastIndexOf(searchStr)+lg;
+          name = str.slice(pos+1);
+          name = name.replace(".geojson", "");
+
+          $("#filters").append('<tr><td></td>\
+            <td>&emsp;<input type="checkbox" class="'+key+' clk subbtn w3-hover-text-amber" value="'+name+'"></input>&emsp;'+name+'</td></tr>');
+          
+          // remove whitespace from name to avoid bugs
+          name_ns = name.replace(/[^A-Z0-9]/ig, "");
+          //name_ns = name.replace(/\s+/g, '')
+          // code to create filters and their respective star ratings
+          $("#rel_table").append("<tr><td>"+name+"</td><td id='rel_"+name_ns+"'>")
+          $("#rel_"+name_ns).append('\
+            <input type="radio" name="'+name+'" value="1"> <a class="st"> ⭐ </a> \
+            <input type="radio" name="'+name+'" value="2"> <a class="st"> ⭐⭐</a> \
+            <input type="radio" name="'+name+'" value="3"> <a class="st"> ⭐⭐⭐</a> \
+            <input type="radio" name="'+name+'" value="4"> <a class="st"> ⭐⭐⭐⭐</a> \
+            <input type="radio" name="'+name+'" value="5"> <a class="st"> ⭐⭐⭐⭐⭐</a> \
+          ');
+          $("#rel_"+name_ns).append("</td></tr>");
+        });
+      });
+      $("#relevance").append("</tbody></table>");
+      // update map with response from flask
+      load_html();
+      // code 99 represents the first time we load the aplication so if the code that was requested is code 99 then we need to perform a click on the first filter and load it
+      // this line is possibly deprecated due to the multi filter implementation but is kept for legacy purposes
+      if (filter == 99){
+        // load first filter into memory
+        console.log($(".subbtn").first().val());
+        $(".subbtn").first().trigger("click");
+        $(".submit").trigger("click");
+        $(".subbtn").first().trigger("click");
+      }
+    });
+  }
+
+  // function to get areas to zoom into
+  function getzones() {
+    // this get post tells flask to load a geojson file and extracts the list of all available locations that we can zoom to
+    // it then creates a list of those locations inside a table
+    $.get("http://"+ip+":5000/background_process_test",function(postresult){
+      results = postresult.split(",");
+      Object.values(results).forEach(name => {
+        $("#zones").append('<tr><td><i class="fa fa-map w3-text-blue w3-large"></i></td><td>'+name+'</td><td>\
+          <a value="'+name+'" class="clk zoom" data-tooltip="Click to zoom"><i class="fa fa-bars"></i></a></td></tr>');
+      });
+    });
+  }
+
+
+  // based on the formula bellow this function processes list created above and zoom into the selected area
+  // this the svg DOM and does not need to comunicate with the flask app to draw an area
+  // might be deprecated due to the explore implementation 
+  // width / 2 - scale * x 
+  function zoom(filter) {
+    x = "";
+    //get values associated with filter
+    $(".mpld3-text").each(function() {
+      if ($(this).text() == filter){
+        x = $(this).attr("x");
+        y = $(this).attr("y");
+      }
+    });
+    if (x == ""){console.log("seu burro");return}
+    scale = $("#scale option:selected").val();
+    transformx = (width/2) - (scale * x);
+    transformy = (height/2) - (scale * y);
+    $(".mpld3-paths").css('transform','translate('+transformx+'px,'+transformy+'px) scale('+scale+')');
+  }
+
+  // this function gets requested by the ajaxrequest and updates the html contents of the div that holds the map
+  function load_html() {
+    //set get the value of the of the map
+    $.get(url,function(getresult){
+      // update map by clearing the previous one
+      $(".map").attr("src",""); // legacy code from png map / might be removed soon
+      $(".map2").html(getresult);
+      // width = $(".mpld3-axesbg").width();
+      // height = $(".mpld3-axesbg").height();
+    });
+  }
+</script>
+<script>
+// templates for aquiring ip from flask and file location of map
+ip = "{{ local_ip }}";
+url = "{{url_for('static', filename='graph.html')}}"
+
+//jquery function
+//
+//
+
+//start code
+//
+
+// code loaded at the begining of the app 
+// responsible for doing the first load of the map, filters and zones
+$( document ).ready(function() {
+  ajaxreq(99);
+  getzones();
+  $('#filters').show(0);
+  $('#zones').hide(0);
+  // width = $('.map2').attr("width");
+});
+
+// UI
+//
+
+//code to swap between zoom and filters
+$(document).on("click",".toggle_filter",function(){
+    // toggle text
+    $('.type_text').text($('.type_text').text() == "Filters" ? "Zones" : "Filters");
+    var text = $('.type_text').text();
+    // toggle divs
+    if (text == "Filters"){
+      $('#filters').show("slow");
+      $('#zones').hide("slow");
+    }
+    else if (text == "Zones"){
+      $('#filters').hide("slow");
+      $('#zones').show("slow");
+    }
+});
+
+//show table modal with star ratings
+$(document).on("click",".clickable",function(){
+    // clear the form of elements
+    $(".modal_body").empty();
+    $(".modal_subtitle").empty();
+    $(".modal_head").text("");
+    // fill in the form with elements
+    contents = $("#relevance")
+    $(".modal_body").html(contents);
+    $(".modal_head").text("Avaliação");
+    //invisible button
+    $( '#modbtn' ).trigger("click" );
+});
+
+// code to manage checkbox auto click
+$(document).on("click",".parent",function(){
+  c_text = $(this).val();
+  $("."+c_text).each(function(){
+    this.checked = !this.checked;
+  });
+});
+
+// code to call the ajax function to request the map to load acording to the currently checked boxes
+$(document).on("click",".submit",function(){
+  listfilter = [];
+  $("input[type=checkbox]:checked").each(function(){
+    if (!$(this).hasClass("parent")){
+      listfilter.push($(this).val());
+    }   
+  });
+  listfilter = JSON.stringify(listfilter)
+  ajaxreq(listfilter)
+});
+
+// zoom button trigger
+$(document).on("click",".zoom",function(){
+  filter = $(this).attr("value");
+  zoom(filter);
+});
+
+
+
+// legacy code to load map onto a png image
+// $(document).on("click",".draw_zoom",function(){
+//   zone=$(this).attr("value");
+//   console.log(filter)
+//   //set get the value of the button we pressed since this code handles different buttons based on the class
+//   $.post("http://"+ip+":5000/background_process_test",{filter:filter,zone:zone},function(postresult){
+//     image_url = "data:image/jpeg;base64,"+postresult.image;
+//     // update status label with response from flask
+//     $(".map").attr("src", image_url);
+//   });
+// });
+
+</script>
+</body>
+</html>
