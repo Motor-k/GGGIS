@@ -1,6 +1,6 @@
-# network-elevator.py
-flask based elevator
-developed by: Gustavo Bule
+# GGGIS
+flask based Geojson visualizer
+developed by: Gustavo Bule & Gabriel Sezaltino
 
 ## how to setup flask: (inside a virtual evironment preferably)
 ```
