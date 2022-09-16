@@ -3,6 +3,7 @@ This program is kind of a middleware responsible for handling web requests and p
 It can serve template web pages
 It can draw charts and refresh the local element without having to redraw or reload the entire page
 It can recieve requests for filters and draw only those elements
+pepega
 """
 import io
 import base64
