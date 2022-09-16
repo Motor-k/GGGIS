@@ -477,20 +477,6 @@ $(document).on("click",".zoom",function(){
   zoom(filter);
 });
 
-
-
-// legacy code to load map onto a png image
-// $(document).on("click",".draw_zoom",function(){
-//   zone=$(this).attr("value");
-//   console.log(filter)
-//   //set get the value of the button we pressed since this code handles different buttons based on the class
-//   $.post("http://"+ip+":5000/background_process_test",{filter:filter,zone:zone},function(postresult){
-//     image_url = "data:image/jpeg;base64,"+postresult.image;
-//     // update status label with response from flask
-//     $(".map").attr("src", image_url);
-//   });
-// });
-
 </script>
 </body>
 </html>
