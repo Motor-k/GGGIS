@@ -326,11 +326,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
           // code to create filters and their respective star ratings
           $("#rel_table").append("<tr><td>"+name+"</td><td id='rel_"+name_ns+"'>")
           $("#rel_"+name_ns).append('\
-            <input type="radio" name="'+name+'" value="1"> <a class="st"> ⭐ </a> \
-            <input type="radio" name="'+name+'" value="2"> <a class="st"> ⭐⭐</a> \
-            <input type="radio" name="'+name+'" value="3"> <a class="st"> ⭐⭐⭐</a> \
-            <input type="radio" name="'+name+'" value="4"> <a class="st"> ⭐⭐⭐⭐</a> \
-            <input type="radio" name="'+name+'" value="5"> <a class="st"> ⭐⭐⭐⭐⭐</a> \
+            <input type="radio" class='+name_ns+' name="'+name+'" value="1" style="display:none;"> <a class="st '+name_ns+' 1"><i class="fa fa-star fa-fw w3-hover-text-deep-orange"></i></a> \
+            <input type="radio" class='+name_ns+' name="'+name+'" value="2" style="display:none;"> <a class="st '+name_ns+' 2"><i class="fa fa-star fa-fw w3-hover-text-orange"></i></a> \
+            <input type="radio" class='+name_ns+' name="'+name+'" value="3" style="display:none;"> <a class="st '+name_ns+' 3"><i class="fa fa-star fa-fw w3-hover-text-amber"></i></a> \
+            <input type="radio" class='+name_ns+' name="'+name+'" value="4" style="display:none;"> <a class="st '+name_ns+' 4"><i class="fa fa-star fa-fw w3-hover-text-yellow"></i></a> \
+            <input type="radio" class='+name_ns+' name="'+name+'" value="5" style="display:none;"> <a class="st '+name_ns+' 5"><i class="fa fa-star fa-fw w3-hover-text-khaki"></i></a> \
           ');
           $("#rel_"+name_ns).append("</td></tr>");
         });
@@ -471,6 +471,19 @@ $(document).on("click",".submit",function(){
   ajaxreq(listfilter)
 });
 
+// code for stars
+$(document).on("click",".st",function(){
+  st = $(this).attr('class');
+  st = st.split(" ");
+  value = st[2];
+  st = st[1];
+  $("input."+st).attr("checked", false);
+  $("input."+st+"[value="+value+"]").attr("checked", true);
+  $("input."+st).each(function(){
+    $(this).val() <= value ? $(this).next().addClass("w3-text-deep-orange") : $(this).next().removeClass("w3-text-deep-orange");
+  });
+});
+
 // zoom button trigger
 $(document).on("click",".zoom",function(){
   filter = $(this).attr("value");
@@ -480,3 +493,17 @@ $(document).on("click",".zoom",function(){
 </script>
 </body>
 </html>
+
+ <!-- //we get rid of the position relative useless div auto created by code
+ $("#Jiro").html($(".mpld3-figure").html());
+ // we scale up the map by 200%
+ $(".mpld3-baseaxes").attr("translate", "scale(2,2)");
+ // we save the new size to a variable
+ x = $(".mpld3-baseaxes").attr("width");
+ y = $(".mpld3-baseaxes").attr("height");
+ // we change the parent container to fit to the size of the new element
+ $("#Jiro").attr("width", x);
+ $("#Jiro").attr("height", y);
+ // fix default mpld3 behaviour
+ $(".mpld3-figure").attr("width", "100%");
+ $(".mpld3-figure").attr("height", "100%"); -->
