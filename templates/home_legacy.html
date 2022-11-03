@@ -158,9 +158,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 <body class="w3-light-grey">
 
 <!-- Top container -->
-<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:1;height: 42px;">
   <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
-  <span class="w3-bar-item w3-right"></span>
+  <span class="w3-bar-item">GGGIS App</span>
 </div>
 
 <!-- Sidebar/menu -->
@@ -185,14 +185,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-twothird">
-        <h5>Regions 
+        <h5>Regions
+          &emsp;
+          <a class="reset" data-tooltip="Reset the map"><i class="fa fa-home"></i></a>
           &emsp;
           <a class="toggle_filter" data-tooltip="Change mode"><i class="fa fa-refresh"></i></a>
-          &emsp;
-          <a class="toggle_mode" data-tooltip="Change Satelite/Graph"><i class="fa fa-picture-o"></i></a>
-          &emsp;
-          <i class="fa fa-cube" style="margin-right:8px"></i><a style="margin-right:8px">Pequisar uma região para adicionar </a>
-          <input style="margin-right:8px" type="text" name="ZoneSearchBox"><a class="w3-button ZoneSearch">Pesquisar</a>
         </h5>
         <div class="map2 w3-container" style="width:100%;overflow-x: scroll;overflow-y: scroll;height: 700px;">
           <img class="map" src="{{url_for('static', filename='graph.png')}}" class="w3-border w3-padding"></img>
@@ -216,7 +213,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
         <option value="5">5x</option>
         <option value="6">6x</option>
       </select>&emsp;
-      
+
       </div>
     </div>
   </div>
@@ -232,16 +229,16 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </div>
 
 <!--Multi purpose modal-->
-<div id="id01" class="w3-modal" style="padding-top:2%!important;opacity:1!important;z-index:9999!important;">
+<div id="id01" class="w3-modal" style="padding-top:10%!important;opacity:1!important;">
   <div class="w3-modal-content w3-card-8" >
     <header class="w3-container w3-black">
       <span style="float: right;font-size: 24px;" onclick="document.getElementById('id01').style.display='none'" class="w3-closebtn clk">&times;</span>
       <h2 class="modal_head"></h2>
     </header>
     <div class="w3-container modal_subtitle" style="border-bottom:1px solid;">
-      
+
     </div>
-      
+
     <div class="w3-container w3-white modal_body">
 
     </div>
@@ -250,13 +247,12 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 <button id='modbtn' style="display:none" onClick="document.getElementById('id01').style.display='block'"></button>
 
 <script>
-  importance=[];
   // Get the Sidebar
   var mySidebar = document.getElementById("mySidebar");
 
   // Get the DIV with overlay effect
   var overlayBg = document.getElementById("myOverlay");
-  
+
   // Toggle between showing and hiding the sidebar, and add overlay effect
   function w3_open() {
     if (mySidebar.style.display === 'block') {
@@ -267,7 +263,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       overlayBg.style.display = "block";
     }
   }
-  
+
   // Close the sidebar with the close button
   function w3_close() {
     mySidebar.style.display = "none";
@@ -275,12 +271,10 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   }
 
   // function responsible for aquiring filters and loading maps
-  function ajaxreq(filter,mode,importance) {
+  function ajaxreq(filter) {
     // post that comunicates the selected filter/s to flask and also recieves the list of available filters in realtime
-    $.post("http://"+ip+":5000/background_process_test",{filter:filter,mode:mode,importance:importance},function(postresult){
+    $.post("http://"+ip+":5000/background_process",{filter:filter},function(postresult){
       $("#filters").empty();
-      $("#relevance").empty();
-      $("#relevance").append("<br><table class='w3-table'><tbody id='rel_table'>");
       Object.entries(postresult.data).forEach(entry => {
         const [key, val] = entry;
         $("#filters").append('<tr><td><input type="checkbox" class="parent clk w3-hover-text-amber" value="'+key+'"></input></td>\
@@ -295,23 +289,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
           $("#filters").append('<tr><td></td>\
             <td>&emsp;<input type="checkbox" class="'+key+' clk subbtn w3-hover-text-amber" value="'+name+'"></input>&emsp;'+name+'</td></tr>');
-          
-          // remove whitespace from name to avoid bugs
-          name_ns = name.replace(/[^A-Z0-9]/ig, "");
-          // code to create filters and their respective star ratings
-          $("#rel_table").append("<tr><td style='width:50%'>"+name+"</td><td style='width:50%;float:right;' id='rel_"+name_ns+"'>")
-          $("#rel_"+name_ns).append('\
-            <input type="radio" class='+name_ns+' name="'+name+'" value="1" style="display:none;" checked> <a class="st '+name_ns+' 1"><i style="font-size:20px" class="fa fa-star fa-fw w3-text-deep-orange w3-hover-text-deep-orange"></i></a> \
-            <input type="radio" class='+name_ns+' name="'+name+'" value="2" style="display:none;"> <a class="st '+name_ns+' 2"><i style="font-size:20px" class="fa fa-star fa-fw w3-hover-text-deep-orange"></i></a> \
-            <input type="radio" class='+name_ns+' name="'+name+'" value="3" style="display:none;"> <a class="st '+name_ns+' 3"><i style="font-size:20px" class="fa fa-star fa-fw w3-hover-text-deep-orange"></i></a> \
-            <input type="radio" class='+name_ns+' name="'+name+'" value="4" style="display:none;"> <a class="st '+name_ns+' 4"><i style="font-size:20px" class="fa fa-star fa-fw w3-hover-text-deep-orange"></i></a> \
-            <input type="radio" class='+name_ns+' name="'+name+'" value="5" style="display:none;"> <a class="st '+name_ns+' 5"><i style="font-size:20px" class="fa fa-star fa-fw w3-hover-text-deep-orange"></i></a> \
-          ');
-          $("#rel_"+name_ns).append("</td></tr>");
         });
       });
-      $("#relevance").append("</tbody></table><br><a style='float:right;margin-bottom: 20px;margin-right: 10px;' class='w3-button w3-black w3-text-white w3-hover-amber clk submit_stars'>\
-        Save</a><br><br>");
       // update map with response from flask
       load_html();
       // code 99 represents the first time we load the aplication so if the code that was requested is code 99 then we need to perform a click on the first filter and load it
@@ -330,7 +309,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   function getzones() {
     // this get post tells flask to load a geojson file and extracts the list of all available locations that we can zoom to
     // it then creates a list of those locations inside a table
-    $.get("http://"+ip+":5000/background_process_test",function(postresult){
+    $.get("http://"+ip+":5000/background_process",function(postresult){
       results = postresult.split(",");
       Object.values(results).forEach(name => {
         $("#zones").append('<tr><td><i class="fa fa-map w3-text-blue w3-large"></i></td><td>'+name+'</td><td>\
@@ -339,48 +318,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     });
   }
 
-  function remoteZones(Zone,MapSizeResult) {
-    //this code will fetch a list of all available maps for the user to then select and download the map he wants
-    $.get("https://dados.gov.pt/api/1/spatial/zones/suggest?q="+Zone+"&size="+MapSizeResult,function(postresult){
-      Object.values(postresult).forEach(result => {
-        // card template
-        modal_body =`
-        <div class="w3-card-4">
-          <header class="w3-container w3-light-grey">
-            <h3>`+result["name"]+`</h3>
-          </header>
-          <div class="w3-container">
-            <i class="w3-left w3-circle fa fa-database" style="padding-right: 8px"></i>
-            <p>`+result["code"]+`</p>
-          </div>
-          <button id="`+result["name"]+`" class="`+result["id"]+` connect w3-button w3-block w3-dark-grey">+ Connect</button>
-        </div>`;
-        // add to modal
-        $(".modal_body").append(modal_body);
-        // show modal
-        $( '#modbtn' ).trigger("click" );
-      })
-    });
-  }
-  
-  // code to request the map data from dados.gov and save it to the flask server
-  function saveMap(id,name) {
-    // get data
-    $.get("https://dados.gov.pt/api/1/spatial/zones/"+id,function(postresult){
-      map = JSON.stringify(postresult);
-      // send data
-      $.post("http://"+ip+":5000/save_file_geojson",{mapdata:map,name:name},function(postresult){
-      result = postresult
-      });
-    });
-    // get response
-    return result
-  }
 
   // based on the formula bellow this function processes list created above and zoom into the selected area
-  // this uses the svg DOM and does not need to comunicate with the flask app to draw an area
-  // might be deprecated due to the explore implementation 
-  // width / 2 - scale * x 
+  // this the svg DOM and does not need to comunicate with the flask app to draw an area
+  // might be deprecated due to the explore implementation
+  // width / 2 - scale * x
   function zoom(filter) {
     x = "";
     //get values associated with filter
@@ -390,7 +332,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
         y = $(this).attr("y");
       }
     });
-    if (x == ""){console.log("you dumb");return}
+    if (x == ""){console.log("seu burro");return}
     scale = $("#scale option:selected").val();
     transformx = (width/2) - (scale * x);
     transformy = (height/2) - (scale * y);
@@ -403,9 +345,22 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     $.get(url,function(getresult){
       // update map by clearing the previous one
       $(".map").attr("src",""); // legacy code from png map / might be removed soon
-      $(".map2").html("");
       $(".map2").html(getresult);
-
+      // //we get rid of the position relative useless div auto created by code
+      // $("#Jiro").html($(".mpld3-figure").html());
+      // // we scale up the map by 200%
+      // $(".mpld3-baseaxes").attr("translate", "scale(2,2)");
+      // // we save the new size to a variable
+      // x = $(".mpld3-baseaxes").attr("width");
+      // y = $(".mpld3-baseaxes").attr("height");
+      // // we change the parent container to fit to the size of the new element
+      // $("#Jiro").attr("width", x);
+      // $("#Jiro").attr("height", y);
+      // // fix default mpld3 behaviour
+      // $(".mpld3-figure").attr("width", "100%");
+      // $(".mpld3-figure").attr("height", "100%");
+      width = $(".mpld3-axesbg").width();
+      height = $(".mpld3-axesbg").height();
     });
   }
 </script>
@@ -421,29 +376,18 @@ url = "{{url_for('static', filename='graph.html')}}"
 //start code
 //
 
-// code loaded at the begining of the app 
+// code loaded at the begining of the app
 // responsible for doing the first load of the map, filters and zones
 $( document ).ready(function() {
-  mode = false;
-  ajaxreq(99, mode, importance);
+  ajaxreq(99);
   getzones();
   $('#filters').show(0);
   $('#zones').hide(0);
-  $(".modal_body").append($("#relevance"));
+  // width = $('.map2').attr("width");
 });
 
 // UI
 //
-
-// code to load map from dados.gov
-$(document).on("click",".connect",function(){
-  st = $(this).attr('class');
-  st = st.split(" ");
-  let id = st[0];
-  let name = $(this).attr('id');
-  let data = saveMap(id,name)
-  console.log(data)
-});
 
 //code to swap between zoom and filters
 $(document).on("click",".toggle_filter",function(){
@@ -461,22 +405,15 @@ $(document).on("click",".toggle_filter",function(){
     }
 });
 
-//code to search for a new region to download
-$(document).on("click",".ZoneSearch",function(){
-  Zone = $("input[name=ZoneSearchBox]").val();
-  MapSizeResult = 10;
-  $(".modal_body").empty();
-  remoteZones(Zone,MapSizeResult);
-});
-
 //show table modal with star ratings
 $(document).on("click",".clickable",function(){
     // clear the form of elements
-    // $(".modal_body").empty();
-    // $(".modal_subtitle").empty();
+    $(".modal_body").empty();
+    $(".modal_subtitle").empty();
     $(".modal_head").text("");
     // fill in the form with elements
-
+    contents = $("#relevance")
+    $(".modal_body").html(contents);
     $(".modal_head").text("Avaliação");
     //invisible button
     $( '#modbtn' ).trigger("click" );
@@ -496,10 +433,10 @@ $(document).on("click",".submit",function(){
   $("input[type=checkbox]:checked").each(function(){
     if (!$(this).hasClass("parent")){
       listfilter.push($(this).val());
-    }   
+    }
   });
   listfilter = JSON.stringify(listfilter)
-  ajaxreq(listfilter,mode,importance);
+  ajaxreq(listfilter)
 });
 
 // code for stars
@@ -510,35 +447,27 @@ $(document).on("click",".st",function(){
   st = st[1];
   $("input."+st).attr("checked", false);
   $("input."+st+"[value="+value+"]").attr("checked", true);
-  // we need to apply this load modal to reflect already loaded importance 
   $("input."+st).each(function(){
     $(this).val() <= value ? $(this).next().addClass("w3-text-deep-orange") : $(this).next().removeClass("w3-text-deep-orange");
   });
-});
-
-
-// serialize manually
-$(document).on("click",".submit_stars",function (){
-  importance = []; 
-  $("input[type=radio]").each(function(){
-    if ($(this).attr("checked")){
-      importance.push({[$(this).attr("name")]:$(this).val()});
-    }
-  });
-  importance = JSON.stringify(importance);
-  document.getElementById('id01').style.display='none';
-});
-
-//code to toggle between sat and graph (not implemented due to lack of time)
-$(document).on("click",".toggle_mode",function(){
-  mode == false ? mode = true : mode = false;
-  console.log(mode)
 });
 
 // zoom button trigger
 $(document).on("click",".zoom",function(){
   filter = $(this).attr("value");
   zoom(filter);
+});
+
+// reset map
+$(document).on("click",".reset",function(){
+  load_html();
+});
+
+$(document).on("click","#scale",function(){
+  // when scale is clicked auto update
+  if (typeof filter !== 'undefined') {
+      zoom(filter)
+  }
 });
 
 </script>

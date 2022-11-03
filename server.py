@@ -23,6 +23,7 @@ from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
 from flask import Flask, render_template, Response, request, redirect, url_for, jsonify
 from traitlets import default
+import random
 
 app = Flask(__name__)
 
@@ -46,8 +47,11 @@ def background_process_test():
         ext = ".geojson"
         lista = []
         listadirs = []
+        fp = {}
         dic = {}
         filtro = request.form['filter']
+        mode = bool(request.form['mode'])
+        print(mode)
         condition = filtro.split(",")
         filtro = json.loads(filtro) if condition[0] != "99" else "99"
         filtrolist = []
@@ -55,8 +59,11 @@ def background_process_test():
         # sizey = 700
         # because python is a garbage language
         try:
+            importance = request.form['importance']
+        except:
+            importance = {}
+        try:
             zone = request.form['zone']
-
         except:
             zone = ""
         curr = 0
@@ -80,116 +87,147 @@ def background_process_test():
                 for file in files:
                     if file.endswith(ext):
                         if filtro[curr] is not None:
-                            # needs to be fixed tomorrow
-                            if filtro[curr].find(file.replace(".geojson", "")) != -1:
+
+                            if filtro[curr].find(file.replace(".geojson", "")) != -1 and len(filtro[curr]) == len(
+                                    file.replace(".geojson", "")):
                                 ficheiro = os.path.join(root, file)
+                                filtrolist.append(filtro[curr])
                                 lista.append(gpd.read_file(ficheiro))
 
-
-            for k, v in dic.items():
-                for value in v:
-                    if value.find(filtro[curr]) != -1:
-                        filtrolist.append(k)
             curr += 1
 
         if filtro != '99':
+
             '''Choropleth with Points of Filter'''
 
-            listafilter = []
-            listafilted = []
+            geopoints = []
+            geopointsfiltered = []
+            geopointsforexplore = {}
             count = []
-            number = []
+            total = []
+            importance2 = {}
+            
+            for a in range(0,len(filtrolist)):
+    
+                importance2[str(filtrolist[a]).replace('.geojson','')] = int(importance[importance.find(str(filtrolist[a]).replace('.geojson', '')) + len(str(filtrolist[a]).replace('.geojson', ''))+3])
 
-            df_places.NOME = sorted(df_places.NOME)
+            # organizing the names
 
             for b in range(0, len(lista)):
+
+                # append da geometry de filtro por filtro
                 for idx, row in lista[b].iterrows():
-                    listafilter.append(row.geometry)
+                    geopoints.append(row.geometry)
 
-                for ele in listafilter:
-                    if ele != None:
-                        listafilted.append(ele)
+                for ele in geopoints:
+                    if ele is not None:
+                        geopointsfiltered.append(ele)
 
-                for a in listafilted:
+                # FOR para analisar a intesecção dos pontos com as regiões
+                for a in geopointsfiltered:
                     for idx1, row1 in df_places.iterrows():
-                        if a.intersects(row1.geometry) == True:
+                        if a.intersects(row1.geometry):
                             count.append(row1.NOME)
+                            # append em count da repetição das localidades
 
+                # for para analisar a contagem dos pontos de cada regiao realizando um append a "total"
                 for a in df_places.NOME:
                     numb = count.count(a)
-                    number.append(numb)
+                    total.append(numb)
 
-                for a in range(0, len(number)):
-                    number[a] = int(number[a])
+                # transformação para int
+                for a in range(len(total)):
+                    total[a] = float(total[a])
 
-                filtrolist[b] = number
-                print(type(number))
+                fp[filtrolist[b]] = total
 
-                listafilter = []
-                listafilted = []
+                geopointsforexplore[filtrolist[b]] = geopointsfiltered
+                geopoints = []
+                geopointsfiltered = []
                 count = []
-                number = []
+                total = []
 
-            # df_places.GlobalID=number
+                # df_places.GlobalID=number
 
-            fig, ax = plt.subplots()
-            lista[0].plot(ax=ax, edgecolor="black", color="yellow", zorder=2)
-            axis = df_places.plot(ax=ax, edgecolor="black", column=df_places.GlobalID, cmap="YlOrRd", zorder=1)
-
-            for idx, row in df_places.iterrows():
-                coord = row['geometry'].centroid
-                coordinates = coord.coords.xy
-
-                x, y = coordinates[0][0], coordinates[1][0]
-                axis.annotate(row['NOME'], xy=(x, y), xytext=(x, y), font="Tahoma")
-            sum = 0
+                sum = 0
+            # organizing the names of Lisboa
             df_places.NOME = sorted(df_places.NOME)
-            for a in range(0, len(filtrolist)):
-                print(a)
-                for b in range(0, len(filtrolist[a])):
-                    sum += filtrolist[a][b]
-                for b in range(0, len(filtrolist[a])):
-                    filtrolist[a][b] = filtrolist[a][b] / sum
 
+            # soma todos os pontos e dps divide pela quantidade total
+            for a in range(len(filtrolist)):
+                for b in range(0, len(fp[filtrolist[a]])):
+                    sum += fp[filtrolist[a]][b]
+
+                for b in range(0, len(fp[filtrolist[a]])):
+                    
+                    if str(filtrolist[a]).replace('.geojson','') in importance2.keys(): 
+                        fp[filtrolist[a]][b] = (fp[filtrolist[a]][b] / sum) * float(importance2[str(filtrolist[a]).replace('.geojson', '')])
+                    else:
+                        fp[filtrolist[a]][b] = (fp[filtrolist[a]][b] / sum) 
                 sum = 0
 
             choropleth = []
-            for a in range(0, len(filtrolist[0])):
+            # soma dos pontos das mesmas regioes
+            for a in range(len(fp[filtrolist[0]])):
                 for b in range(0, len(filtrolist)):
-                    sum += filtrolist[b][a]
+                    sum += fp[filtrolist[b]][a]
 
                 # print(sum)
                 choropleth.append(sum)
                 sum = 0
 
-            print(choropleth)
-
             df_places["Censos 2021 População Lisboa_field_4"] = choropleth
-            c = 2
-            fig, ax = plt.subplots()
-            for a in lista:
-                c += 1
-                a.plot(ax=ax, zorder=c)
 
-            axis = df_places.plot(ax=ax, edgecolor="black", column="Censos 2021 População Lisboa_field_4",
-                                  cmap="YlOrRd", zorder=1)
+            if mode == True:
 
-            for idx, row in df_places.iterrows():
-                coord = row['geometry'].centroid
-                coordinates = coord.coords.xy
+                color = []
 
-                x, y = coordinates[0][0], coordinates[1][0]
-                axis.annotate(row['NOME'], xy=(x, y), xytext=(x, y), font="Tahoma")
+                for i in range(len(lista)):
+                    color.append('#%06X' % random.randint(0, 0xFFFFFF))
 
-            html_str = mpld3.fig_to_html(fig)
-            Html_file = open("./static/graph.html", "w")
-            Html_file.write(html_str)
-            Html_file.close()
+                plot2 = df_places.explore(column="Censos 2021 População Lisboa_field_4",
+                                          cmap='YlOrRd', style_kwds=dict(color="black"))
+
+                for a in range(len(lista)):
+                    axa = random.randint(0, len(color) - 1)
+                    lista[a] = lista[a][lista[a].geometry != None]
+                    d = {'name': filtrolist[a].replace('.geojson', ''), 'geometry': lista[a].geometry}
+                    gdf = gpd.GeoDataFrame(d, crs="EPSG:4326")
+                    gdf.explore(m=plot2,
+                                color=color.pop(axa),
+                                style_kwds=dict(weight=9),
+                                popup=True)
+
+                plot2.save("./static/graph.html")
+
+
+
+            elif mode == False:
+
+                c = 2
+                fig, ax = plt.subplots()
+                for a in lista:
+                    c += 1
+                    a.plot(ax=ax, zorder=c)
+
+                axis = df_places.plot(ax=ax, edgecolor="black", column="Censos 2021 População Lisboa_field_4",
+                                      cmap="YlOrRd", zorder=1)
+
+                for idx, row in df_places.iterrows():
+                    coord = row['geometry'].centroid
+                    coordinates = coord.coords.xy
+
+                    x, y = coordinates[0][0], coordinates[1][0]
+                    axis.annotate(row['NOME'], xy=(x, y), xytext=(x, y), font="Tahoma")
+
+                html_str = mpld3.fig_to_html(fig, no_extras=True, figid="Jiro")
+                Html_file = open("./static/graph.html", "w")
+                Html_file.write(html_str)
+                Html_file.close()
 
             # wtf = df_places.explore(column="Censos 2021 População Lisboa_POPULACAO RESIDENTE", cmap='YlOrRd')
             # a = "./static/graph.html"
             # wtf.save(a)
-
 
         json_object = dic
 
@@ -202,3 +240,15 @@ def background_process_test():
         listname = ",".join(listname)
         return listname
 
+@app.route('/save_file_geojson', methods=['POST'])
+def save_file_geojson():
+    try:
+        mapdata = request.form['mapdata']
+        zone = request.form['name']
+        with open("./maps/"+zone+".geojson", "w") as fo:
+                fo.write(mapdata)
+    except:
+        return 'File could not be saved due to missing or incorrect data'
+
+    print(zone)
+    return 'File saved successfully'
