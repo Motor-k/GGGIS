@@ -22,7 +22,6 @@ from shapely import geometry
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
 from flask import Flask, render_template, Response, request, redirect, url_for, jsonify
-from traitlets import default
 
 app = Flask(__name__)
 
@@ -41,7 +40,7 @@ def home():
 def background_process_test():
     if request.method == "POST":
 
-        df_places = gpd.read_file('./Lisboa.geojson')
+        df_places = gpd.read_file('maps/Lisboa.geojson')
         directory = "./archives"
         ext = ".geojson"
         lista = []
@@ -201,7 +200,7 @@ def background_process_test():
         return jsonify(data=json_object, status=200)
 
     elif request.method == "GET":
-        df_places = gpd.read_file('./Lisboa.geojson')
+        df_places = gpd.read_file('maps/Lisboa.geojson')
         df_places.NOME = sorted(df_places.NOME)
         listname = df_places.NOME.tolist()
         listname = ",".join(listname)

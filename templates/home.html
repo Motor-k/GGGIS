@@ -251,6 +251,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
 <script>
   importance=[];
+  
   // Get the Sidebar
   var mySidebar = document.getElementById("mySidebar");
 
@@ -279,8 +280,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     // post that comunicates the selected filter/s to flask and also recieves the list of available filters in realtime
     $.post("http://"+ip+":5000/background_process_test",{filter:filter,mode:mode,importance:importance},function(postresult){
       $("#filters").empty();
-      $("#relevance").empty();
-      $("#relevance").append("<br><table class='w3-table'><tbody id='rel_table'>");
+
+      $(".modal_body").empty();
+      $(".modal_body").append("<br><table class='w3-table'><tbody id='rel_table'>");
       Object.entries(postresult.data).forEach(entry => {
         const [key, val] = entry;
         $("#filters").append('<tr><td><input type="checkbox" class="parent clk w3-hover-text-amber" value="'+key+'"></input></td>\
@@ -295,8 +297,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
           $("#filters").append('<tr><td></td>\
             <td>&emsp;<input type="checkbox" class="'+key+' clk subbtn w3-hover-text-amber" value="'+name+'"></input>&emsp;'+name+'</td></tr>');
-          
+    
           // remove whitespace from name to avoid bugs
+          
           name_ns = name.replace(/[^A-Z0-9]/ig, "");
           // code to create filters and their respective star ratings
           $("#rel_table").append("<tr><td style='width:50%'>"+name+"</td><td style='width:50%;float:right;' id='rel_"+name_ns+"'>")
@@ -310,8 +313,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
           $("#rel_"+name_ns).append("</td></tr>");
         });
       });
-      $("#relevance").append("</tbody></table><br><a style='float:right;margin-bottom: 20px;margin-right: 10px;' class='w3-button w3-black w3-text-white w3-hover-amber clk submit_stars'>\
+      $(".modal_body").append("</tbody></table><br><a style='float:right;margin-bottom: 20px;margin-right: 10px;' class='w3-button w3-black w3-text-white w3-hover-amber clk submit_stars'>\
         Save</a><br><br>");
+
       // update map with response from flask
       load_html();
       // code 99 represents the first time we load the aplication so if the code that was requested is code 99 then we need to perform a click on the first filter and load it
@@ -344,7 +348,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     $.get("https://dados.gov.pt/api/1/spatial/zones/suggest?q="+Zone+"&size="+MapSizeResult,function(postresult){
       Object.values(postresult).forEach(result => {
         // card template
-        modal_body =`
+        moda_body =`
         <div class="w3-card-4">
           <header class="w3-container w3-light-grey">
             <h3>`+result["name"]+`</h3>
@@ -356,7 +360,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
           <button id="`+result["name"]+`" class="`+result["id"]+` connect w3-button w3-block w3-dark-grey">+ Connect</button>
         </div>`;
         // add to modal
-        $(".modal_body").append(modal_body);
+        $(".modal_body").append(moda_body);
         // show modal
         $( '#modbtn' ).trigger("click" );
       })
@@ -370,10 +374,12 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       map = JSON.stringify(postresult);
       // send data
       $.post("http://"+ip+":5000/save_file_geojson",{mapdata:map,name:name},function(postresult){
-      result = postresult
+        result = postresult
       });
     });
-    // get response
+
+    // get response 
+    // we have to generate an alert with this message on return
     return result
   }
 
@@ -442,7 +448,9 @@ $(document).on("click",".connect",function(){
   let id = st[0];
   let name = $(this).attr('id');
   let data = saveMap(id,name)
-  console.log(data)
+  alert(data);
+  ajaxreq(99, mode, importance);
+  $(".w3-closebtn").trigger("click")
 });
 
 //code to swap between zoom and filters
@@ -472,11 +480,10 @@ $(document).on("click",".ZoneSearch",function(){
 //show table modal with star ratings
 $(document).on("click",".clickable",function(){
     // clear the form of elements
-    // $(".modal_body").empty();
-    // $(".modal_subtitle").empty();
+    //$(".modal_body").empty();
     $(".modal_head").text("");
     // fill in the form with elements
-
+    $(".modal_body").append($("#relevance"));
     $(".modal_head").text("Avaliação");
     //invisible button
     $( '#modbtn' ).trigger("click" );

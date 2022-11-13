@@ -15,6 +15,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import fig_to_html, plugins
 
+import functions
 import os
 import json
 from numpy import empty
@@ -22,7 +23,6 @@ from shapely import geometry
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
 from flask import Flask, render_template, Response, request, redirect, url_for, jsonify
-from traitlets import default
 import random
 
 app = Flask(__name__)
@@ -42,7 +42,6 @@ def home():
 def background_process_test():
     if request.method == "POST":
 
-        df_places = gpd.read_file('./Lisboa.geojson')
         directory = "./archives"
         ext = ".geojson"
         lista = []
@@ -67,7 +66,7 @@ def background_process_test():
         except:
             zone = ""
         curr = 0
-        limit = len(filtro) if filtro != '99' else 1
+        limit = 1
         while curr < limit:
             i = 0
             listafiles = []
@@ -97,6 +96,10 @@ def background_process_test():
             curr += 1
 
         if filtro != '99':
+            lista = []
+            filtrolist = []
+            lista, filtrolist = functions.readdirectory("./archives", ".geojson", *[a for a in filtro])
+            ListMapsRead = functions.readdirectory("./maps", ".geojson")
 
             '''Choropleth with Points of Filter'''
 
@@ -109,7 +112,7 @@ def background_process_test():
             
             for a in range(0,len(filtrolist)):
     
-                importance2[str(filtrolist[a]).replace('.geojson','')] = int(importance[importance.find(str(filtrolist[a]).replace('.geojson', '')) + len(str(filtrolist[a]).replace('.geojson', ''))+3])
+                importance2[str(filtrolist[a]).replace('.geojson','')] = int(importance[importance.find(str(filtrolist[a]).replace('.geojson', '')+'"') + len(str(filtrolist[a]).replace('.geojson', ''))+3])
 
             # organizing the names
 
@@ -125,20 +128,22 @@ def background_process_test():
 
                 # FOR para analisar a intesecção dos pontos com as regiões
                 for a in geopointsfiltered:
-                    for idx1, row1 in df_places.iterrows():
+                    for idx1, row1 in ListMapsRead[0].iterrows():
                         if a.intersects(row1.geometry):
                             count.append(row1.NOME)
                             # append em count da repetição das localidades
 
                 # for para analisar a contagem dos pontos de cada regiao realizando um append a "total"
-                for a in df_places.NOME:
+                for a in ListMapsRead[0].NOME:
                     numb = count.count(a)
                     total.append(numb)
+                    print(total)
 
                 # transformação para int
                 for a in range(len(total)):
                     total[a] = float(total[a])
 
+               
                 fp[filtrolist[b]] = total
 
                 geopointsforexplore[filtrolist[b]] = geopointsfiltered
@@ -151,7 +156,7 @@ def background_process_test():
 
                 sum = 0
             # organizing the names of Lisboa
-            df_places.NOME = sorted(df_places.NOME)
+            ListMapsRead[0].NOME = sorted(ListMapsRead[0].NOME)
 
             # soma todos os pontos e dps divide pela quantidade total
             for a in range(len(filtrolist)):
@@ -176,7 +181,7 @@ def background_process_test():
                 choropleth.append(sum)
                 sum = 0
 
-            df_places["Censos 2021 População Lisboa_field_4"] = choropleth
+            ListMapsRead[0]["Censos 2021 População Lisboa_field_4"] = choropleth
 
             if mode == True:
 
@@ -185,7 +190,7 @@ def background_process_test():
                 for i in range(len(lista)):
                     color.append('#%06X' % random.randint(0, 0xFFFFFF))
 
-                plot2 = df_places.explore(column="Censos 2021 População Lisboa_field_4",
+                plot2 = ListMapsRead[0].explore(column="Censos 2021 População Lisboa_field_4",
                                           cmap='YlOrRd', style_kwds=dict(color="black"))
 
                 for a in range(len(lista)):
@@ -197,7 +202,8 @@ def background_process_test():
                                 color=color.pop(axa),
                                 style_kwds=dict(weight=9),
                                 popup=True)
-
+                for a in range(1, len(ListMapsRead)):
+                    ListMapsRead[a].explore(m=plot2)
                 plot2.save("./static/graph.html")
 
 
@@ -210,10 +216,10 @@ def background_process_test():
                     c += 1
                     a.plot(ax=ax, zorder=c)
 
-                axis = df_places.plot(ax=ax, edgecolor="black", column="Censos 2021 População Lisboa_field_4",
+                axis = ListMapsRead[0].plot(ax=ax, edgecolor="black", column="Censos 2021 População Lisboa_field_4",
                                       cmap="YlOrRd", zorder=1)
 
-                for idx, row in df_places.iterrows():
+                for idx, row in ListMapsRead[0].iterrows():
                     coord = row['geometry'].centroid
                     coordinates = coord.coords.xy
 
@@ -232,9 +238,9 @@ def background_process_test():
         json_object = dic
 
         return jsonify(data=json_object, status=200)
-
+    #only works on Lisboa for now
     elif request.method == "GET":
-        df_places = gpd.read_file('./Lisboa.geojson')
+        df_places = gpd.read_file('maps/Lisboa.geojson')
         df_places.NOME = sorted(df_places.NOME)
         listname = df_places.NOME.tolist()
         listname = ",".join(listname)
@@ -250,5 +256,4 @@ def save_file_geojson():
     except:
         return 'File could not be saved due to missing or incorrect data'
 
-    print(zone)
     return 'File saved successfully'
